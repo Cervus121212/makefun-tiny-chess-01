@@ -5,8 +5,8 @@ Entry for make.fun **"Build the strongest chess engine in 4 KB of Python"**
 
 ## Files
 
-- `main.py` — **4,064 bytes** (limit 4,096). One line: LZMA + base85
-  payload, tiny unpacker. Python 3.13 stdlib only, deterministic
+- `main.py` — **3,940 bytes** (limit 4,096). One line: LZMA payload
+  (kit `makefun compress` of `engine_v8d.py`), tiny unpacker. Python 3.13 stdlib only, deterministic
   (fixed 40,000-node budget per search depth, no clock, no randomness).
 
 ## Engine (v8d, from first principles)
@@ -41,27 +41,19 @@ Practice Elo ≥ 1,154 reaches the live gauntlet. Best house: sunfish
 
 ```sh
 python3 dev/build_main.py dev/engine_v8d.py main.py  # must print <= 4096
-# start the kit env server for trial-0 (port 808x, state /tmp/stateX), then:
-MAKEFUN_ENV_URL=http://127.0.0.1:808x python3 main.py
-# score with the kit scorer (output/export, reference, scores dirs)
+MAKEFUN_ENV_URL=http://127.0.0.1:808x python3 main.py  # kit env server on 808x
 ```
 
-## Submission (NOT done — build only)
+## Submission
 
-1. New public GitHub repo under **cervus121212** (after bounty opened)
-   with exactly `main.py` + `README.md` + `LICENSE`.
-2. `makefun bundle` + `makefun check` (needs this session's harness
-   transcript for the transcript gate).
-3. Submit via make.fun CLI/API with Solana wallet
-   `2LL4DixM2Q1GFfSoCzhpMfpGP519AABY61gQ9fQJqzZo`.
+Source-bundle entry (`makefun init` + drand anchor, no GitHub);
+wallet `2LL4DixM2Q1GFfSoCzhpMfpGP519AABY61gQ9fQJqzZo`.
 
 ## Lessons
 
 - `python_minifier` `rename_globals=True` is unsafe with `global`
   declarations (collisions → `UnboundLocalError`); use `False`.
 - Raw latin-1 payload would be smaller but risks UTF-8 intake; entry is
-  pure ASCII base85.
-- Trimming features barely shrinks LZMA; fitting 4,096 B needed a dense
-  rewrite, not trimming.
-- Quiescence without a ply cap explodes in tactical positions; cap 12
-  bounds it.
+  pure ASCII base85. Trimming features barely shrinks LZMA; fitting
+  4,096 B needed a dense rewrite, not trimming. Quiescence without a
+  ply cap explodes in tactical positions; cap 12 bounds it.
